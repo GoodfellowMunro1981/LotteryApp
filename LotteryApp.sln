@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35818.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryApp", "LotteryApp\LotteryApp.csproj", "{DB739980-7810-4840-A256-C2C719D3B52D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryAppTests", "LotteryAppTests\LotteryAppTests.csproj", "{BFDC2781-AC8C-58EC-B47B-BF728FD6CA63}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB739980-7810-4840-A256-C2C719D3B52D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB739980-7810-4840-A256-C2C719D3B52D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB739980-7810-4840-A256-C2C719D3B52D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB739980-7810-4840-A256-C2C719D3B52D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFDC2781-AC8C-58EC-B47B-BF728FD6CA63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFDC2781-AC8C-58EC-B47B-BF728FD6CA63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFDC2781-AC8C-58EC-B47B-BF728FD6CA63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFDC2781-AC8C-58EC-B47B-BF728FD6CA63}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BB38C40E-BD52-452B-AD7A-3C8683615D63}
+	EndGlobalSection
+EndGlobal
