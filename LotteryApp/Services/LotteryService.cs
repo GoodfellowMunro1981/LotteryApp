@@ -226,7 +226,7 @@ namespace LotteryApp.Services
             };
         }
 
-        private static void UpdatePlayersBalanceWithWinnings(
+        public static void UpdatePlayersBalanceWithWinnings(
             Player player,
             Guid grandPrizeWinningTicket,
             List<Guid> secondPrizeWinningTickets,
@@ -257,7 +257,7 @@ namespace LotteryApp.Services
             }
         }
 
-        private static string GenerateResultsMessage(
+        public static string GenerateResultsMessage(
             List<Player> players,
             int houseProfit,
             WiningResult grandPrizeWinningResult,
