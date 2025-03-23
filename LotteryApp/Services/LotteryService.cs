@@ -22,13 +22,13 @@ namespace LotteryApp.Services
 
             List<Player> computerPlayers = players.Where(p => !p.IsHuman).ToList();
             List<Player> allPlayers = [];
-            int houseProfit = 0;
+            decimal houseProfit = 0m;
 
             UserInterface.DisplayWelcomeMessage(humanPlayer.Name);
 
             bool gameInProgress = false;
 
-            while (humanPlayer.Balance > LotteryConfig.MinimumPlayerBalance || gameInProgress)
+            while (humanPlayer.Balance > LotteryConfig.TicketPrice || gameInProgress)
             {
                 UserInterface.ShowPlayerBalance(humanPlayer.Balance);
                 UserInterface.DisplaySelectNumberOfTicketsToPurchase();
@@ -64,8 +64,9 @@ namespace LotteryApp.Services
 
                 if(requestedNumberOfTickets > humanPlayer.Balance)
                 {
-                    UserInterface.ShowMessageBalanceOnlyAllowsNumberOfTickets(humanPlayer.Balance);
-                    requestedNumberOfTickets = humanPlayer.Balance;
+                    var allowedNumberOfTickets = (int)Math.Floor(humanPlayer.Balance);
+                    UserInterface.ShowMessageBalanceOnlyAllowsNumberOfTickets(allowedNumberOfTickets);
+                    requestedNumberOfTickets = allowedNumberOfTickets;
                 }
 
                 UserInterface.ShowMessageNumberOfTicketsPurchased(requestedNumberOfTickets);
@@ -95,6 +96,7 @@ namespace LotteryApp.Services
                 gameInProgress = false;
             }
 
+            UserInterface.ShowPlayerBalance(humanPlayer.Balance);
             UserInterface.GameOverMessage();
         }
 
@@ -103,9 +105,16 @@ namespace LotteryApp.Services
         {
             foreach (var player in players.Where(x => !x.IsHuman))
             {
-                if (player.Balance > LotteryConfig.MinimumPlayerBalance)
+                if (player.Balance > LotteryConfig.TicketPrice)
                 {
-                    int allowedTickets = Math.Min(player.Balance, LotteryConfig.MaximumTicketsPerPlayer);
+                    int playerBalance = (int)Math.Floor(player.Balance);
+                    int allowedTickets = Math.Min(playerBalance, LotteryConfig.MaximumTicketsPerPlayer);
+
+                    if(allowedTickets == 0)
+                    {
+                        continue;
+                    }
+
                     int numberOfTickets = random.Next(LotteryConfig.MinimumTicketsPerPlayer, allowedTickets);
 
                     player.NumberOfTickets = numberOfTickets;
@@ -126,14 +135,13 @@ namespace LotteryApp.Services
 
         public static GameResultModel DetermineWinners(
             List<Player> players, 
-            int houseProfit)
+            decimal houseProfit)
         {
             // determine winners
             int totalTickets = players.Sum(p => p.NumberOfTickets);
-            int totalRevenue = totalTickets * LotteryConfig.TicketPrice;
+            decimal totalRevenue = totalTickets * LotteryConfig.TicketPrice;
+            decimal grandPrize = totalRevenue * LotteryConfig.FirstPrizePrecentageAsDecimal;
 
-            // Prize distribution
-            int grandPrize = (int)Math.Ceiling(totalRevenue * LotteryConfig.FirstPrizePrecentageAsDecimal);
             int secondWinnersCount = (int)Math.Round(totalTickets * LotteryConfig.NumberOfSecondPrizeTicketsPrecentageAsDecimal);
             int thirdWinnersCount = (int)Math.Round(totalTickets * LotteryConfig.NumberOfThirdPrizeTicketsPrecentageAsDecimal);
 
@@ -161,11 +169,10 @@ namespace LotteryApp.Services
             decimal prizeForSecondWinners = (totalRevenue * LotteryConfig.SecondPrizePrecentageAsDecimal) / secondPrizeWinningTickets.Count;
             decimal prizeForThirdWinners = (totalRevenue * LotteryConfig.ThirdPrizePrecentageAsDecimal) / thirdPrizeWinningTickets.Count;
 
-            int secondPrizePerWinningTicket = (int)Math.Ceiling(prizeForSecondWinners);
-            int thirdPrizePerWinningTicket = (int)Math.Ceiling(prizeForThirdWinners);
 
-            int totalPrizes = grandPrize + (secondPrizePerWinningTicket * secondPrizeWinningTickets.Count) + (thirdPrizePerWinningTicket * thirdPrizeWinningTickets.Count);
-            int gameProfit = totalRevenue - totalPrizes;
+            decimal totalPrizes = grandPrize + (prizeForSecondWinners * secondPrizeWinningTickets.Count) + (prizeForThirdWinners * thirdPrizeWinningTickets.Count);
+            decimal gameProfit = totalRevenue - totalPrizes;
+
             houseProfit += gameProfit;
 
             var grandPrizeWinningPlayer = players
@@ -186,7 +193,7 @@ namespace LotteryApp.Services
                                                      PlayerName = p.Name,
                                                      DisplayOrder = p.DisplayOrder,
                                                      NumberOfWiningTickets = p.TicketIds.Count(x => secondPrizeWinningTickets.Contains(x)),
-                                                     PrizeAmount = p.TicketIds.Count(x => secondPrizeWinningTickets.Contains(x)) * secondPrizePerWinningTicket
+                                                     PrizeAmount = p.TicketIds.Count(x => secondPrizeWinningTickets.Contains(x)) * prizeForSecondWinners
                                                  })
                                                 .ToList();
 
@@ -197,7 +204,7 @@ namespace LotteryApp.Services
                                                     PlayerName = p.Name,
                                                     DisplayOrder = p.DisplayOrder,
                                                     NumberOfWiningTickets = p.TicketIds.Count(x => thirdPrizeWinningTickets.Contains(x)),
-                                                    PrizeAmount = p.TicketIds.Count(x => thirdPrizeWinningTickets.Contains(x)) * thirdPrizePerWinningTicket
+                                                    PrizeAmount = p.TicketIds.Count(x => thirdPrizeWinningTickets.Contains(x)) * prizeForThirdWinners
                                                 }) 
                                                 .ToList();
             foreach (var player in players)
@@ -207,8 +214,8 @@ namespace LotteryApp.Services
                                                     secondPrizeWinningTickets,
                                                     thirdPrizeWinningTickets,
                                                     grandPrize,
-                                                    secondPrizePerWinningTicket,
-                                                    thirdPrizePerWinningTicket);
+                                                    prizeForSecondWinners,
+                                                    prizeForThirdWinners);
             }
 
 
@@ -231,9 +238,9 @@ namespace LotteryApp.Services
             Guid grandPrizeWinningTicket,
             List<Guid> secondPrizeWinningTickets,
             List<Guid> thirdPrizeWinningTickets,
-            int grandPrize,
-            int secondPrizePerWinner,
-            int thirdPrizePerWinner)
+            decimal grandPrize,
+            decimal secondPrizePerWinner,
+            decimal thirdPrizePerWinner)
         {
             foreach (var playerTicketId in player.TicketIds)
             {
@@ -259,7 +266,7 @@ namespace LotteryApp.Services
 
         public static string GenerateResultsMessage(
             List<Player> players,
-            int houseProfit,
+            decimal houseProfit,
             WiningResult grandPrizeWinningResult,
             List<WiningResult> secondPrizeWinningResults,
             List<WiningResult> thirdPrizeWinningResults)
@@ -276,20 +283,20 @@ namespace LotteryApp.Services
 
             resultBuilder.AppendLine("");
             resultBuilder.AppendLine("--- Winners and Prizes ---");
-            resultBuilder.AppendLine($"Grand Prize Winner: {grandPrizeWinningResult.PlayerName} (Number of Winning Tickets {grandPrizeWinningResult.NumberOfWiningTickets}, Prize Total: ${grandPrizeWinningResult.PrizeAmount})");
+            resultBuilder.AppendLine($"Grand Prize Winner: {grandPrizeWinningResult.PlayerName} (Number of Winning Tickets {grandPrizeWinningResult.NumberOfWiningTickets}, Prize Total: ${grandPrizeWinningResult.PrizeAmount:F})");
 
             foreach (var secondPrizeWinningResult in secondPrizeWinningResults.OrderBy(x => x.DisplayOrder))
             {
-                resultBuilder.AppendLine($"Second Prize Winners: {secondPrizeWinningResult.PlayerName} (Number of Winning Tickets {secondPrizeWinningResult.NumberOfWiningTickets}, Prize Total: ${secondPrizeWinningResult.PrizeAmount})");
+                resultBuilder.AppendLine($"Second Prize Winners: {secondPrizeWinningResult.PlayerName} (Number of Winning Tickets {secondPrizeWinningResult.NumberOfWiningTickets}, Prize Total: ${secondPrizeWinningResult.PrizeAmount:F})");
             }
 
             foreach (var thirdPrizeWinningResult in thirdPrizeWinningResults.OrderBy(x => x.DisplayOrder))
             {
-                resultBuilder.AppendLine($"Third Prize Winner: {thirdPrizeWinningResult.PlayerName} (Number of Winning Tickets {thirdPrizeWinningResult.NumberOfWiningTickets}, Prize Total: ${thirdPrizeWinningResult.PrizeAmount})");
+                resultBuilder.AppendLine($"Third Prize Winner: {thirdPrizeWinningResult.PlayerName} (Number of Winning Tickets {thirdPrizeWinningResult.NumberOfWiningTickets}, Prize Total: ${thirdPrizeWinningResult.PrizeAmount:F})");
             }
 
             resultBuilder.AppendLine("");
-            resultBuilder.AppendLine($"Total House Revenue: ${houseProfit}");
+            resultBuilder.AppendLine($"Total House Revenue: ${houseProfit:F}");
             return resultBuilder.ToString();
         }
 

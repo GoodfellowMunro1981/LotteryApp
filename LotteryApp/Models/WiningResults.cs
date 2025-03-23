@@ -8,6 +8,6 @@
 
         public int NumberOfWiningTickets { get; set; }
 
-        public int PrizeAmount { get; set; }
+        public decimal PrizeAmount { get; set; }
     }
 }

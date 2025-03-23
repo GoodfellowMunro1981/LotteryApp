@@ -12,7 +12,7 @@
 
         public bool IsHuman { get; set; }
 
-        public int Balance { get; set; }
+        public decimal Balance { get; set; }
 
         public int DisplayOrder { get; set; }
     }

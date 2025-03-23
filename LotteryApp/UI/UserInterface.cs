@@ -26,9 +26,9 @@ namespace LotteryApp.UI
         }
 
         public static void ShowPlayerBalance(
-            int balance)
+            decimal balance)
         {
-            Console.WriteLine($"Your current balance is ${balance}.");
+            Console.WriteLine($"Your current balance is ${balance:F}");
         }
 
         public static void ShowMessageMaximumNumberOfTicketsAllowed(
@@ -44,9 +44,9 @@ namespace LotteryApp.UI
         }
 
         public static void ShowMessageBalanceOnlyAllowsNumberOfTickets(
-            int balance)
+            int allowedNumberOfTickets)
         {
-            Console.WriteLine($"Your balance only allows you to buy {balance} ticket(s).");
+            Console.WriteLine($"Your balance only allows you to buy {allowedNumberOfTickets} ticket(s).");
         }
 
         public static void ShowMessageNumberOfTicketsPurchased(
@@ -62,7 +62,7 @@ namespace LotteryApp.UI
 
         public static void GameOverMessage()
         {
-            Console.WriteLine($"Your balance is at ${LotteryConfig.MinimumPlayerBalance}, Game Over!");
+            Console.WriteLine($"You have insufficent funds to purchase any more tickets, Game Over!");
         }
     }
 }

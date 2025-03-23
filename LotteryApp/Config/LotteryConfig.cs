@@ -16,14 +16,14 @@
 
         public const int MinimumPlayerBalance = 0;
 
-        public const decimal FirstPrizePrecentageAsDecimal = 0.5m;
+        public const decimal FirstPrizePrecentageAsDecimal = 0.5m; // 50% of the total ticket revenue.
 
-        public const decimal SecondPrizePrecentageAsDecimal = 0.3m;
+        public const decimal SecondPrizePrecentageAsDecimal = 0.3m;  // 30% of the total ticket revenue 
 
-        public const decimal ThirdPrizePrecentageAsDecimal = 0.1m;
+        public const decimal ThirdPrizePrecentageAsDecimal = 0.1m; // 10% of the total ticket revenue 
 
-        public const decimal NumberOfSecondPrizeTicketsPrecentageAsDecimal = 0.1m;
+        public const decimal NumberOfSecondPrizeTicketsPrecentageAsDecimal = 0.1m;  // 10% of the total number of tickets
 
-        public const decimal NumberOfThirdPrizeTicketsPrecentageAsDecimal = 0.1m;
+        public const decimal NumberOfThirdPrizeTicketsPrecentageAsDecimal = 0.2m;  // 20% of the total number of tickets
     }
 }
