@@ -28,7 +28,7 @@ namespace LotteryApp.UI
         public static void ShowPlayerBalance(
             int balance)
         {
-            Console.WriteLine($"Your current balance is ${balance}, you can buy {balance} ticket(s).");
+            Console.WriteLine($"Your current balance is ${balance}.");
         }
 
         public static void ShowMessageMaximumNumberOfTicketsAllowed(
