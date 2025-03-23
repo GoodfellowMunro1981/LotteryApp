@@ -8,7 +8,7 @@
 
         public const int StartingBalance = 10; // $10 per player
 
-        public const int TicketPrice = 1;  // $1 per ticket
+        public const decimal TicketPrice = 1.00m;  // $1 per ticket
 
         public const int MinimumTicketsPerPlayer = 1;
 
