@@ -31,40 +31,46 @@ namespace LotteryApp.Services
             while (humanPlayer.Balance > LotteryConfig.MinimumPlayerBalance || gameInProgress)
             {
                 UserInterface.ShowPlayerBalance(humanPlayer.Balance);
-                UserInterface.DisplaySelectNumberOfTicketsToPurchase(humanPlayer.Name);
+                UserInterface.DisplaySelectNumberOfTicketsToPurchase();
 
                 string? userInput = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(userInput))
                 {
                     UserInterface.InvalidInput();
-                    UserInterface.DisplaySelectNumberOfTicketsToPurchase(humanPlayer.Name);
+                    UserInterface.DisplaySelectNumberOfTicketsToPurchase();
                     continue;
                 }
 
-                var requestedNumberOfTickets = ProcessInput(userInput);
-
-                if (!requestedNumberOfTickets.HasValue)
+                if (!int.TryParse(userInput, out int requestedNumberOfTickets))
                 {
                     UserInterface.InvalidInput();
+                    UserInterface.DisplaySelectNumberOfTicketsToPurchase();
                     continue;
                 }
 
-                // TODO fix - use requested 14 tickets no message only 10 allowed
+                if(requestedNumberOfTickets < LotteryConfig.MinimumTicketsPerPlayer)
+                {
+                    UserInterface.ShowMessageNumberOfTicketsSelectedBelowMinimumTicketsPerPlayer(LotteryConfig.MinimumTicketsPerPlayer);
+                    continue;
+                }
 
-                if (requestedNumberOfTickets.Value > humanPlayer.Balance)
+                if(requestedNumberOfTickets > LotteryConfig.MaximumTicketsPerPlayer
+                    && humanPlayer.Balance >= LotteryConfig.MaximumTicketsPerPlayer)
+                {
+                    UserInterface.ShowMessageMaximumNumberOfTicketsAllowed(LotteryConfig.MaximumTicketsPerPlayer);
+                    requestedNumberOfTickets = LotteryConfig.MaximumTicketsPerPlayer;
+                }
+
+                if(requestedNumberOfTickets > humanPlayer.Balance)
                 {
                     UserInterface.ShowMessageBalanceOnlyAllowsNumberOfTickets(humanPlayer.Balance);
                     requestedNumberOfTickets = humanPlayer.Balance;
                 }
 
-                if(requestedNumberOfTickets.Value > LotteryConfig.MaximumTicketsPerPlayer)
-                {
-                    UserInterface.ShowMessageBalanceOnlyAllowsNumberOfTickets(humanPlayer.Balance);
-                    requestedNumberOfTickets = LotteryConfig.MaximumTicketsPerPlayer;
-                }
+                UserInterface.ShowMessageNumberOfTicketsPurchased(requestedNumberOfTickets);
 
-                humanPlayer.NumberOfTickets = requestedNumberOfTickets.Value;
+                humanPlayer.NumberOfTickets = requestedNumberOfTickets;
                 humanPlayer.TicketIds = [];
 
                 for (int i = 0; i < humanPlayer.NumberOfTickets; i++)
@@ -74,7 +80,7 @@ namespace LotteryApp.Services
                 }
 
                 gameInProgress = true;
-                humanPlayer.Balance -= requestedNumberOfTickets.Value;
+                humanPlayer.Balance -= requestedNumberOfTickets;
                 computerPlayers = AssignTicketsToNonHumanPlayers(computerPlayers);
 
                 allPlayers = computerPlayers.Union([humanPlayer]).ToList();
@@ -90,17 +96,6 @@ namespace LotteryApp.Services
             }
 
             UserInterface.GameOverMessage();
-        }
-
-        public static int? ProcessInput(
-            string userInput)
-        {
-            if (int.TryParse(userInput, out int number))
-            {
-                return number;
-            }
-
-            return null;
         }
 
         public static List<Player> AssignTicketsToNonHumanPlayers(

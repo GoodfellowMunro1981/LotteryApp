@@ -15,8 +15,7 @@ namespace LotteryApp.UI
             Console.WriteLine($"Welcome to the Lottery App, {playerName}.");
         }
 
-        public static void DisplaySelectNumberOfTicketsToPurchase(
-           string playerName)
+        public static void DisplaySelectNumberOfTicketsToPurchase()
         {
             Console.WriteLine("Select number of tickets to purchase...");
         }
@@ -32,16 +31,28 @@ namespace LotteryApp.UI
             Console.WriteLine($"Your current balance is ${balance}, you can buy {balance} ticket(s).");
         }
 
+        public static void ShowMessageMaximumNumberOfTicketsAllowed(
+            int maximumTicketsPerPlayer)
+        {
+            Console.WriteLine($"Maximum number of tickets allowed per player is {maximumTicketsPerPlayer}.");
+        }
+
+        public static void ShowMessageNumberOfTicketsSelectedBelowMinimumTicketsPerPlayer(
+            int minimumTicketAllowed)
+        {
+            Console.WriteLine($"Minimum number of tickets per player is {minimumTicketAllowed}.");
+        }
+
         public static void ShowMessageBalanceOnlyAllowsNumberOfTickets(
             int balance)
         {
-            Console.WriteLine($"Your balance only allows you to buy {balance} ticket(s), you have purchased {balance} ticket(s)");
+            Console.WriteLine($"Your balance only allows you to buy {balance} ticket(s).");
         }
 
-        public static void ShowMessageNumberOfTicketsSelectedExceedsMaximumTicketsPerPlayer(
-            int maximumTicketsPerPlayer)
+        public static void ShowMessageNumberOfTicketsPurchased(
+            int numberOfTicketsPurchased)
         {
-            Console.WriteLine($"Maximum number of tickets per player is {maximumTicketsPerPlayer}, you have purchased {maximumTicketsPerPlayer} ticket(s)");
+            Console.WriteLine($"You have purchased {numberOfTicketsPurchased} ticket(s).");
         }
 
         public static void DisplayResults(string results)

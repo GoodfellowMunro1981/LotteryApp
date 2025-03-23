@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LotteryApp.Config;
+﻿using LotteryApp.Config;
 using LotteryApp.Domain;
 using LotteryApp.Services;
 
@@ -91,24 +86,6 @@ namespace LotteryAppTests.Services
                 Assert.AreEqual(0, player.TicketIds.Count);
                 Assert.AreEqual(LotteryConfig.MinimumPlayerBalance, player.Balance);
             }
-        }
-
-        [TestMethod()]
-        [DataRow("10", 10)]
-        [DataRow("0", 0)]
-        [DataRow("-5", -5)]
-        [DataRow("abc", null)]
-        [DataRow("", null)]
-        [DataRow(null, null)]
-        public void ProcessInput_ShouldReturnExpectedResult(string userInput, int? expected)
-        {
-            // Arrange
-
-            // Act
-            var result = LotteryService.ProcessInput(userInput);
-
-            // Assert
-            Assert.AreEqual(expected, result);
         }
     }
 }
